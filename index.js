@@ -1,4 +1,4 @@
-const { DATABASE_SCHEMA, DATABASE_URL, SHOW_PG_MONITOR } = require('./config');
+const { DATABASE_SCHEMA, DATABASE_URL, SHOW_PG_MONITOR, POPULATION_API_HOST } = require('./config');
 const massive = require('massive');
 const monitor = require('pg-monitor');
 
@@ -83,4 +83,6 @@ const monitor = require('pg-monitor');
         console.log('finally');
     }
     console.log('main.js: after start');
+
+    
 })();

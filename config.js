@@ -11,6 +11,7 @@ module.exports = {
   DATABASE_SCHEMA: process.env.DATABASE_SCHEMA || 'public', 
   DATABASE_URL: process.env.DATABASE_URL || '',
   SHOW_PG_MONITOR: process.env.SHOW_PG_MONITOR || 'false',
+  DATAUSA_API_HOST: process.env.DATAUSA_API_HOST || '',
 }
 
 const keys = Object.keys(module.exports).sort()
