@@ -1,10 +1,18 @@
-const { POPULATION_API_HOST } = require('./config');
 const axios = require('axios');
 
-// const api = axios.create({
-//     baseUrl: POPULATION_API_HOST,
-// })
+async function getUsaData() {
+    const { data } = await axios.get('https://datausa.io/api/data?drilldowns=Nation&measures=Population')
 
-axios.get('https://datausa.io/api/data?drilldowns=Nation&measures=Population')
-    .then((response) => console.log(response.data.data))
+    return data.data
+}
 
+async function calculateUsaPopulation(yearsToFetch, data) {
+    const filteredData = data.filter((record) => yearsToFetch.includes(record.Year))
+
+    return filteredData.reduce((acc, curr) => acc + curr.Population, 0)
+}
+
+module.exports = {
+    getUsaData,
+    calculateUsaPopulation
+}

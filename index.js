@@ -1,6 +1,7 @@
-const { DATABASE_SCHEMA, DATABASE_URL, SHOW_PG_MONITOR, POPULATION_API_HOST } = require('./config');
+const { DATABASE_SCHEMA, DATABASE_URL, SHOW_PG_MONITOR } = require('./config');
 const massive = require('massive');
 const monitor = require('pg-monitor');
+const { getUsaData, calculateUsaPopulation } = require('./api');
 
 // Call start
 (async () => {
@@ -65,17 +66,26 @@ const monitor = require('pg-monitor');
     try {
         await migrationUp();
 
-        //exemplo de insert
-        const result1 = await db[DATABASE_SCHEMA].api_data.insert({
-            doc_record: { 'a': 'b' },
-        })
-        console.log('result1 >>>', result1);
+        const data = await getUsaData()
 
-        //exemplo select
-        const result2 = await db[DATABASE_SCHEMA].api_data.find({
-            is_active: true
-        });
-        console.log('result2 >>>', result2);
+        const filteredDataInMemory = await calculateUsaPopulation(['2018', '2019', '2020'], data)
+        
+        await db[DATABASE_SCHEMA].api_data.insert({
+            doc_record: { data }
+        })
+
+        const filteredDataWithQuery = await db.query(
+            `SELECT SUM((data->>'Population')::int)
+            FROM (
+              SELECT jsonb_array_elements(doc_record->'data') AS data
+              FROM ${DATABASE_SCHEMA}.api_data
+            ) AS t
+            WHERE (data->>'Year')::int BETWEEN 2018 AND 2020;`
+        )
+
+        console.log('POPULATION LOG IN MEMORY', filteredDataInMemory)
+        console.log('POPULATION LOG WITH SELECT', filteredDataWithQuery[0])
+
 
     } catch (e) {
         console.log(e.message)
