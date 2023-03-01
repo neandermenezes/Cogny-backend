@@ -84,7 +84,7 @@ const { getUsaData, calculateUsaPopulation } = require('./api');
         )
 
         console.log('POPULATION LOG IN MEMORY', filteredDataInMemory)
-        console.log('POPULATION LOG WITH SELECT', filteredDataWithQuery[0])
+        console.log('POPULATION LOG WITH SELECT', filteredDataWithQuery[0].sum)
 
 
     } catch (e) {
